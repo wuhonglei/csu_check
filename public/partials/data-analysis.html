@@ -1,0 +1,53 @@
+<!-- 日期查询范围 -->
+<div class="form-group">
+    <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i> 日期范围 <small>(默认当天)</small></label>
+    <br>
+    <div class="form-group col-xs-3">
+        <input type="text" class="form-control" ng-model="fromDate" data-min-date="03/1/2016" data-max-date="today" data-date-format="yyyy-MM-dd" data-autoclose="1" placeholder="From" bs-datepicker>
+    </div>
+    <div class="form-group col-xs-3">
+        <input type="text" class="form-control" ng-model="untilDate" data-min-date="{{fromDate}}" data-max-date="today" data-date-format="yyyy-MM-dd" data-autoclose="1" placeholder="Until" bs-datepicker>
+    </div>
+</div>
+<form class="form-inline input-group input-group-position" role="form" novalidate>
+    <div class="form-group">
+        <button class="btn btn-default" ng-click="searchDate()" data-type="success" data-title="{{tooltip.title1}}" bs-tooltip>查询理论研究所</button>
+    </div>
+    <div class="form-group space-width"></div>
+    <div class="input-group col-xs-3">
+        <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="getPernalData()">查询</button>
+  </span>
+        <input type="text" class="form-control" ng-model="$parent.name" placeholder="个人姓名" data-title="{{tooltip.title4}}" bs-tooltip="tooltip">
+    </div>
+    <div class="form-group space-width"></div>
+    <div class="input-group col-xs-3">
+        <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="getLabData()">查询</button>
+  </span>
+        <input type="text" class="form-control" ng-model="$parent.labName" placeholder="实验室名称" data-title="{{tooltip.title3}}" bs-tooltip="tooltip">
+    </div>
+    <div class="form-group space-width"></div>
+    <div class="input-group col-xs-3">
+        <span class="input-group-btn">
+        <button class="btn btn-default" type="button">查询</button>
+  </span>
+        <input type="text" class="form-control" data-title="{{tooltip.title2}}" ng-init="TutorName=''" ng-model="TutorName" placeholder="导师姓名 " bs-tooltip="tooltip" disabled="disabled">
+    </div>
+</form>
+<div id="chart-contaoner ">
+    <!-- 第一行 -->
+    <div class="row ">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="chart-compute">
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="chart-person">
+        </div>
+    </div>
+    <!-- 第二行 -->
+    <div class="row ">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="chart-lab">
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="chart-tutor">
+        </div>
+    </div>
+</div>

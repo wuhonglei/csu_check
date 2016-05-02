@@ -1,0 +1,65 @@
+<!-- 顶部的选择区:实验室，姓名 -->
+<form class="form-inline" role="form">
+    <!-- 姓名搜索 -->
+    <div class="form-group">
+        <label class="sr-only" for="">label</label>
+        <input type="text" class="form-control" ng-init="search.name=''" ng-model="search.name" ng-change="showName()" id="" placeholder="姓名">
+        <!-- <button type="submit" class="btn btn-primary">姓名查询</button> -->
+    </div>
+    &nbsp;
+    <!-- 实验室搜索 -->
+    <div class="form-group">
+        <label class="sr-only" for="">label</label>
+        <input type="text" class="form-control" ng-init="search.lab=''" ng-model="search.lab" ng-change="showLab()" id="" placeholder="实验室">
+        <!-- <button type="submit" class="btn btn-primary">实验室查询</button> -->
+    </div>
+    &nbsp;
+    <!-- 日期选择 -->
+    <div class="form-group">
+        <label class="control-label"><i class="fa fa-calendar"></i> 日期查询:</label>
+        <div class="form-group">
+            <input type="text" size="10" class="form-control" ng-model="searchDate" ng-change="disDate()" data-date-format="yyyy-MM-dd" data-min-date="03/1/2016" data-max-date="today" data-autoclose="1" placeholder="Date" bs-datepicker>
+        </div>
+    </div>
+    &nbsp;
+    <!-- 是否按时 -->
+    <label>是否按时:</label>
+    <div class="btn-group" ng-init="search.isPunctual=3" ng-model="search.isPunctual" bs-radio-group>
+        <label class="btn btn-default">
+            <input type="radio" class="btn btn-default" ng-click="isPunctual()" value="按时"> 按时</label>
+        <label class="btn btn-default">
+            <input type="radio" class="btn btn-default" ng-click="isPunctual()" value="3"> 不选</label>
+        <label class="btn btn-default">
+            <input type="radio" class="btn btn-default" ng-click="isPunctual()" value="未按时"> 未按时</label>
+    </div>
+</form>
+<br>
+<br>
+<!-- 签到表格 -->
+<table class="table">
+    <thead>
+        <tr>
+            <th ng-repeat="elem in tableHeader track by $index" ng-bind="elem"></th>
+            <th>
+                <a href="" ng-click="setOrder()">
+                    日在线时间(小时)
+                    <span ng-show="clicked && reverse" class="fa fa-caret-down"></span>
+                    <span ng-show="clicked && !reverse" class="fa fa-caret-up"></span>
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="items in tableContent | orderBy:order:reverse | tableFilter:search as filtered_result track by $index" ng-class-even="'active'">
+            <td ng-repeat="item in items track by $index">{{ item }}</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="12" ng-show="filtered_result.length"><em>记录数: {{filtered_result.length}}</em></td>
+        </tr>
+        <tr>
+            <td colspan="12" ng-if="filtered_result.length === 0" class="text-center"><i class="fa fa-space-shuttle" aria-hidden="true"></i>&nbsp;<em>没有符合要求的选项</em>&nbsp;<i class="fa fa-space-shuttle" aria-hidden="true"></i></td>
+        </tr>
+    </tfoot>
+</table>

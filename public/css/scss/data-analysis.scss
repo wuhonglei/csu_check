@@ -1,0 +1,42 @@
+@import 'public';
+
+$screen-sm-min: 768px;
+$screen-md-min: 992px;
+$screen-lg-min: 1200px;
+// 平板电脑
+@media all and (min-width: $screen-sm-min) {
+    #chart-compute,
+    #chart-lab,
+    #chart-tutor,
+    #chart-person {
+        height: 450px;
+    }
+}
+
+@media all and (min-width: $screen-md-min) {
+    #chart-compute,
+    #chart-lab,
+    #chart-tutor,
+    #chart-person {
+        height: 450px;
+    }
+}
+
+@media all and (min-width: $screen-lg-min) {
+    #chart-compute,
+    #chart-lab,
+    #chart-tutor,
+    #chart-person {
+        height: 550px;
+    }
+}
+
+.space-width {
+	width: 30px;
+}
+
+.input-group-position {
+	float: left;
+	margin-left: 15px;
+	margin-bottom: 15px;
+}

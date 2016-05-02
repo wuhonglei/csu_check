@@ -1,0 +1,49 @@
+<!--   
+    预期功能: 
+        一、按照实验室筛选， 实验室排序，时间排序， 姓名查询， 日期选择
+        二、个人到勤统计、实验室到勤统计(折线图分析)
+ -->
+<!DOCTYPE html>
+<html ng-app="myApp">
+
+<head>
+    <meta charset="utf-8">
+    <title>学生出勤</title>
+    <!-- <base href="/"> -->
+    <link rel="icon" href="icon/clock3.png">
+    <link rel="icon" href="data:;base64,=">
+    <link rel="stylesheet" href="css/lib/font_awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="css/stylesheets/home.css">
+    <link rel="stylesheet" href="css/stylesheets/data-analysis.css">
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <header>
+        <ng-include src="'templates/nav-header.html'"></ng-include>
+    </header>
+    <!-- 内容区 -->
+    <div class="container">
+        <div ng-view></div>
+    </div>
+    <!-- ====================================页面js================================================ -->
+    <!-- <script src="js/lib/jquery.min.js" data-semver="v2.0.0"></script> -->
+    <script src="lib/angular.min.js" data-semver="v1.5.5"></script>
+    <script src="lib/angular-strap.min.js" data-semver="v2.3.8"></script>
+    <script src="lib/angular-strap.tpl.min.js" data-semver="v2.3.8"></script>
+    <script src="lib/angular-route.min.js"></script>
+    <script src="lib/echarts.min.js" data-semver="v3.1.7"></script>
+    <!-- 自定义angularjs  -->
+    <script src="app.js"></script>
+    <script src="services/home/show-table-service.js"></script>
+    <script src="services/data-analysis/show-range-date-service.js"></script>
+    <script src="services/data-analysis/show-charts-compute-service.js"></script>
+    <script src="services/data-analysis/show-charts-personal-service.js"></script>
+    <script src="services/data-analysis/show-charts-lab-service.js"></script>
+    <script src="filters/home/show-table-filter.js"></script>
+    <script src="controllers/home/table-controller.js"></script>
+    <script src="controllers/data-analysis/analysis-controller.js"></script>
+</body>
+
+</html>
