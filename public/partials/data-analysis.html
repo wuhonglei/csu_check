@@ -15,24 +15,24 @@
     </div>
     <div class="form-group space-width"></div>
     <div class="input-group col-xs-3">
+        <input type="text" class="form-control" ng-model="$parent.name" placeholder="个人姓名" data-title="{{tooltip.title4}}" bs-tooltip="tooltip">
         <span class="input-group-btn">
         <button class="btn btn-default" type="button" ng-click="getPernalData()">查询</button>
   </span>
-        <input type="text" class="form-control" ng-model="$parent.name" placeholder="个人姓名" data-title="{{tooltip.title4}}" bs-tooltip="tooltip">
     </div>
     <div class="form-group space-width"></div>
     <div class="input-group col-xs-3">
+        <input type="text" class="form-control" ng-model="$parent.labName" placeholder="实验室名称" data-title="{{tooltip.title3}}" bs-tooltip="tooltip">
         <span class="input-group-btn">
         <button class="btn btn-default" type="button" ng-click="getLabData()">查询</button>
   </span>
-        <input type="text" class="form-control" ng-model="$parent.labName" placeholder="实验室名称" data-title="{{tooltip.title3}}" bs-tooltip="tooltip">
     </div>
     <div class="form-group space-width"></div>
     <div class="input-group col-xs-3">
+        <input type="text" class="form-control" data-title="{{tooltip.title2}}" ng-init="TutorName=''" ng-model="TutorName" placeholder="导师姓名 " bs-tooltip="tooltip" disabled="disabled">
         <span class="input-group-btn">
         <button class="btn btn-default" type="button">查询</button>
   </span>
-        <input type="text" class="form-control" data-title="{{tooltip.title2}}" ng-init="TutorName=''" ng-model="TutorName" placeholder="导师姓名 " bs-tooltip="tooltip" disabled="disabled">
     </div>
 </form>
 <div id="chart-contaoner ">
