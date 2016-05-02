@@ -2,9 +2,10 @@ angular.module('showChartService')
     .factory('drawPersonalChartsService', ['$http', function($http) {
         var chart = {};
         chart.getPersonalChart = function(url, name, fromDate, untilDate) {
+            if (Date.parse(fromDate) > Date.parse(untilDate)) return "date-error";
             var NAME_PATTERN = /^[\u4e00-\u9fa5]+/i;
             var isNameValid = NAME_PATTERN.test(name);
-            if (!isNameValid) return "error";
+            if (!isNameValid) return "name-error";
 
             var arrDate = new Array();
             var arrData = new Array();
