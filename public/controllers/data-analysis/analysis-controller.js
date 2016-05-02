@@ -144,8 +144,13 @@ angular.module('myApp').controller('AnalysisCtrl', ['$scope', '$http', 'setRange
 
         // 动态更新图表数据
         $scope.searchDate = function() {
-            drawComputeChartsService.getComputeChart('/compute/',
-                $scope.fromDate, $scope.untilDate).then(function(response) {
+            var res = drawComputeChartsService.getComputeChart('/compute/',
+                $scope.fromDate, $scope.untilDate);
+            if (res === "date-error") {
+                console.error("日期格式输入有误");
+                return;
+            }
+            res.then(function(response) {
                 myComputeChart.setOption({
                     xAxis: {
                         data: response.date
@@ -156,6 +161,7 @@ angular.module('myApp').controller('AnalysisCtrl', ['$scope', '$http', 'setRange
                     }]
                 });
             }, function(response) {
+                console.info(response);
                 console.error("获取计算机系到勤率失败");
             });
         };
@@ -164,8 +170,12 @@ angular.module('myApp').controller('AnalysisCtrl', ['$scope', '$http', 'setRange
             console.info("实验室名称:", $scope.labName);
             var res = drawLabChartsService.getLabChart('/lab/',
                 $scope.labName, $scope.fromDate, $scope.untilDate);
-            if (res === "error") {
-                console.info("姓名格式输入错误");
+            if (res === "date-error") {
+                console.error("日期格式输入有误");
+                return;
+            }
+            if (res === "name-error") {
+                console.error("姓名格式输入错误");
                 return;
             }
             res.then(
@@ -182,7 +192,7 @@ angular.module('myApp').controller('AnalysisCtrl', ['$scope', '$http', 'setRange
                     })
                 },
                 function(response) {
-                    // 请求成功
+                    // 请求失败
                 });
         };
 
@@ -190,8 +200,12 @@ angular.module('myApp').controller('AnalysisCtrl', ['$scope', '$http', 'setRange
             console.info("姓名:", $scope.name);
             var res = drawPersonalChartsService.getPersonalChart('/personal/',
                 $scope.name, $scope.fromDate, $scope.untilDate);
-            if (res === "error") {
-                console.info("姓名格式输入错误");
+            if (res === "date-error") {
+                console.error("日期格式输入错误");
+                return;
+            }
+            if (res === "name-error") {
+                console.error("姓名格式输入有误");
                 return;
             }
             res.then(
@@ -220,7 +234,9 @@ angular.module('myApp').controller('AnalysisCtrl', ['$scope', '$http', 'setRange
                         }]
                     });
                 },
-                function(response) {});
+                function(response) {
+                    // 请求失败
+                });
         }
     }
 ]);
