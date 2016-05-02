@@ -2,9 +2,10 @@ angular.module('showChartService')
     .factory('drawLabChartsService', ['$http', function($http) {
         var chart = {};
         chart.getLabChart = function(url, labName, fromDate, untilDate) {
+            if (Date.parse(fromDate) > Date.parse(untilDate)) return "date-error";
             var LAB_PATTERN = /(^[\u4e00-\u9fa5]+\-?[\d]*|^\d+\-?\d+$)/i;
             var isNameValid = LAB_PATTERN.test(labName);
-            if (!isNameValid) return "error";
+            if (!isNameValid) return "name-error";
 
             var arrDate = new Array();
             var arrData = new Array();
@@ -27,7 +28,7 @@ angular.module('showChartService')
                         "date": arrDate,
                         "data": arrData
                     };
-
+ 
                 arrName = data.name;
                 arrDate = data.date;
                 arrData = data.data;
