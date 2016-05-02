@@ -2,6 +2,7 @@ angular.module('showChartService', [])
     .factory('drawComputeChartsService', ['$http', function($http) {
         var chart = {};
         chart.getComputeChart = function(url, fromDate, untilDate) {
+            if (Date.parse(fromDate) > Date.parse(untilDate)) return "date-error";
             var formatDate = function(date) {
                 var y = date.getFullYear();
                 var m = date.getMonth() + 1;
