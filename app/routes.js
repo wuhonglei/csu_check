@@ -45,7 +45,7 @@ module.exports = function(router) {
                 if (err) throw err;
                 // console.info(data)
                 // var data_json = JSON.parse(data);
-                console.info("类型:", data);
+                // console.info("类型:", data);
                 res.json(data[0].data);
             });
         });
@@ -88,7 +88,7 @@ module.exports = function(router) {
                     arrDate.push(getWeekDay(value.date));
                     arrData.push(rate);
                 })
-                res.json({"date": arrDate, "data": arrData});
+                res.json({ "date": arrDate, "data": arrData });
             });
         });
     // 查询某段时间个人的签到记录
@@ -164,10 +164,17 @@ module.exports = function(router) {
                     // res.json(value.data);
                 });
                 var len3 = name_arr.length;
+                // console.info("实验室人员:", name_arr);
+                var increase;
                 // 判断该实验室人数
-                var increase = name_arr.indexOf(name_arr[0], 1);
+                if (len === 1) {
+                    // 如果查询日期只有一天
+                    increase = name_arr.length;
+                } else {
+                    increase = name_arr.indexOf(name_arr[0], 1);
+                }
                 name_arr = name_arr.slice(0, increase);
-                console.info("实验室人数:", increase);
+                // console.info("实验室人数:", increase);
                 // 用来存放实验室每个人某段时间的签到时间
                 var totalTime = [];
                 // 初始化数组
