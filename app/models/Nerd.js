@@ -14,6 +14,7 @@ var personSchema = new Schema({
         name: String,
         lab: String,
         tutor: String,
+        isNotPunctual: {type: Number, default: 0},
         time: Number
     }]
 });

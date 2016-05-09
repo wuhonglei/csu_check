@@ -24,6 +24,7 @@ var persSchema = new Schema({
         time: Number,
         lab: String,
         degree: String,
+        isNotPunctual: { type: Number, default: 0 },
         Tutor: { type: String, default: "" }
     }]
 });
@@ -41,6 +42,7 @@ var updateMongoDB = function(url, day) {
                 decodeEntities: true
             });
 
+            // 提取表头
             var arr_key = [];
             $("th").each(function(index, th_value) {
                 arr_key.push($(th_value).text());
@@ -50,18 +52,15 @@ var updateMongoDB = function(url, day) {
             for (var i = 5; i <= 9; i = i + 2) {
                 arr_key[i] = "离开时间";
             }
-            // console.info(arr_key);
-            // console.info("在线小时:", arr_key[len1 - 1]);
-            // console.info("关键值:", arr_key);
 
-            // 用来存放每天每个人的数据
+            // 用来存放每天每个人的详细签到数据
             var date_arr = [];
             // 用来存放每天 个人时长, 相关信息
             var person_data = [];
 
             date_arr.push(arr_key);
 
-
+            // 提取日在线时长字符串中的数字, 转化为Number
             var tranferHour = function(str) {
                 var res = str.split(/小时|分/);
                 var h = res[0];
@@ -72,56 +71,60 @@ var updateMongoDB = function(url, day) {
                 }
                 return [h, m].join(".");
             }
+
+            // 判断是否按时, 不按时记为1, 按时记为0, 星期六, 星期天, 不作记录
+            var isNotPunctual = function(punctual) {
+                var today = new Date(day);
+                var weekDay = today.getDay();
+                if (punctual === "未按时" && weekDay != 0 && weekDay != 6) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            };
+
             $("tr").each(function(index_out, each_tr) {
                 var per_arr = [];
                 $($(each_tr).children("td")).each(function(index_in, each_td) {
-                    var obj = {};
-                    var key = arr_key[index_in];
+                    // 提取td包含的内容
                     var text = $(each_td).text();
-                    obj[key] = text;
+
+                    // 截取到达时间, 离开时间字符串中的字串
                     if (index_in >= 4 && index_in <= 9 && text != "null") {
                         text = text.substr(11, 8);;
                         // console.info(text);
                     }
                     per_arr.push(text);
                 });
+                // 如果提取的表格存在内容
                 if (per_arr[0]) {
                     var len = per_arr.length;
-                    // console.info("时长:", per_arr[len-1]);
-                    // per_arr[len - 1][arr_key[len - 1]] = tranferHour(per_arr[len - 1][arr_key[len - 1]]);
                     per_arr[len - 1] = Number(tranferHour(per_arr[len - 1]));
-                    // console.info("时间:", typeof per_arr[11]);
                     var person_obj = {};
                     person_obj.lab = per_arr[0];
                     person_obj.name = per_arr[1];
                     person_obj.degree = per_arr[3];
                     person_obj.time = per_arr[11];
+                    person_obj.isNotPunctual = isNotPunctual(per_arr[10]);
                     person_data.push(person_obj);
                     date_arr.push(per_arr);
                 }
             });
 
             // console.info(JSON.stringify(date_arr));
-            var detail_doc = new DayDetail({
-                date: new Date(day),
-                data: date_arr
-            });
-
-            var person_doc = new PersonOneDay({
-                date: new Date(day),
-                data: person_data
-            });
-
-            // console.info(detail_doc);
-            // console.info(new Date(day));
-            // detail_doc.save(function(err) {
-            //     if (err) throw err;
-            //     console.info("详细信息保存成功");
+            // var detail_doc = new DayDetail({
+            //     date: new Date(day),
+            //     data: date_arr
             // });
 
+            // var person_doc = new PersonOneDay({
+            //     date: new Date(day),
+            //     data: person_data
+            // });
 
             // ==============在数据库中查找特定日期的documents, 如果存在则更新, 不存在则创建新的documents=====================
             var query = { date: new Date(day) };
+            console.info("查询日期:", query);
             DayDetail.update(query, {
                 date: new Date(day),
                 data: date_arr
@@ -129,10 +132,6 @@ var updateMongoDB = function(url, day) {
                 upsert: true
             }).exec();
 
-            // person_doc.save(function(err){
-            //     if (err) throw err;
-            //     console.info("个人信息保存成功")
-            // });
             PersonOneDay.update(query, {
                 date: new Date(day),
                 data: person_data
@@ -150,12 +149,12 @@ var Interval = 0.1 * 60 * 60 * 1000;
 var url = "http://202.197.61.249:8080/2.05/Show2.jsp?day=";
 
 
-// var startDate = Date.parse(new Date("2016-03-01"));
-// var endDate = Date.parse(new Date("2016-05-02"));
-// var oneDay = 24 * 60 * 60 * 1000;
-// for (var i = startDate; i <= endDate; i += oneDay) {
-// }
 var grabPage = function() {
+    // var startDate = Date.parse(new Date("2016-03-01"));
+    // var endDate = Date.parse(new Date("2016-05-09"));
+    // var oneDay = 24 * 60 * 60 * 1000;
+    // for (var i = startDate; i <= endDate; i += oneDay) {
+    // }
     setInterval(function() {
         var cur_d = new Date();
         var y = cur_d.getFullYear();

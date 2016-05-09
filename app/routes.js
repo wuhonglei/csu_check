@@ -42,7 +42,7 @@ module.exports = function(router) {
     // 查询某天 详细签到情况
     router.route('/detail/:day')
         .get(function(req, res) {
-            console.info("查询日期:", req.params.day);
+            // console.info("查询日期:", req.params.day);
             Day.find({ date: req.params.day }, function(err, data) {
                 if (err) throw err;
                 // console.info(data)
@@ -83,8 +83,8 @@ module.exports = function(router) {
                         if (items[i][10] === "按时") unlateCount++;
                         if (items[i][10] === "未按时") lateCount++;
                     }
-                    console.info("按时数目:", unlateCount);
-                    console.info("不按时数目:", lateCount);
+                    // console.info("按时数目:", unlateCount);
+                    // console.info("不按时数目:", lateCount);
 
                     var rate = Math.round(unlateCount / (unlateCount + lateCount) * 100);
                     arrDate.push(getWeekDay(value.date));
@@ -152,6 +152,7 @@ module.exports = function(router) {
                 var arrDate = [];
                 var arrTime = [];
                 var arrDegree = [];
+                var arrNotPunctual = [];
                 if (data.length === 0) {
                     res.json({ message: "nodata" });
                     return;
@@ -163,11 +164,13 @@ module.exports = function(router) {
                     var name = [];
                     var time = [];
                     var degree = [];
+                    var isNotPunctual = [];
                     for (var i = 0, index = len = value.data.length; i < len; i++) {
                         if (value.data[i].lab === lab) {
                             degree.push(JSON.parse(JSON.stringify(value.data[i])).degree);
                             name.push(value.data[i].name);
                             time.push(value.data[i].time);
+                            isNotPunctual.push(value.data[i].isNotPunctual);
                             index = i;
                         }
                         // 说明该实验室已经遍历完
@@ -176,6 +179,7 @@ module.exports = function(router) {
 
                     arrName.push(name);
                     arrTime.push(time);
+                    arrNotPunctual.push(isNotPunctual);
                     arrDegree.push(degree);
                     arrDate.push(getWeekDay(value.date));
                 });
@@ -183,6 +187,7 @@ module.exports = function(router) {
                 // 格式化数据
                 var finalName = [];
                 var finalTime = [];
+                var finalNotPunctual = [];
                 var finalDegree = [];
                 var viewedName = [];
                 // 遍历姓名数组
@@ -196,17 +201,21 @@ module.exports = function(router) {
                         if (index === -1) {
                             // 存放个人时间
                             var time = new Array();
+                            var punctual = new Array();
                             time[i] = arrTime[i][j];
+                            punctual[i] = arrNotPunctual[i][j];
                             viewedName.push(name);
                             finalName.push(name);
                             finalDegree.push(arrDegree[i][j]);
                             finalTime.push(time);
+                            finalNotPunctual.push(punctual);
                         } else {
                             finalTime[index][i] = arrTime[i][j];
+                            finalNotPunctual[index][i] = arrNotPunctual[i][j];
                         }
                     }
                 }
-                res.json({ "date": arrDate, "name": finalName, "data": finalTime, "degree": finalDegree });
+                res.json({ "date": arrDate, "name": finalName, "data": finalTime, "late": finalNotPunctual, "degree": finalDegree });
             })
         });
 
@@ -252,6 +261,7 @@ module.exports = function(router) {
                     var arrName = [];
                     var arrTime = [];
                     var arrDegree = [];
+                    var arrNotPunctual = [];
 
                     // data存放的是日期范围内所有用户的数据
                     data.forEach(function(value, index) {
@@ -259,23 +269,28 @@ module.exports = function(router) {
                         var name = [];
                         var time = [];
                         var degree = [];
+                        var isNotPunctual = [];
                         for (var i = 0, len = value.data.length; i < len; i++) {
                             if (studentsName.indexOf(value.data[i].name) != -1) {
                                 // console.info("姓名:", value.data[i].name);
                                 degree.push(JSON.parse(JSON.stringify(value.data[i])).degree);
                                 name.push(value.data[i].name);
                                 time.push(value.data[i].time);
+                                isNotPunctual.push(value.data[i].isNotPunctual);
                             }
                         }
 
                         arrName.push(name);
                         arrTime.push(time);
+                        arrNotPunctual.push(isNotPunctual);
                         arrDegree.push(degree);
                         arrDate.push(getWeekDay(value.date));
+
                     });
 
                     var finalName = [];
                     var finalTime = [];
+                    var finalNotPunctual = [];
                     var finalDegree = [];
                     var viewedName = [];
                     // 遍历姓名数组
@@ -289,18 +304,22 @@ module.exports = function(router) {
                             if (index === -1) {
                                 // 存放个人时间
                                 var time = new Array();
+                                var punctual = new Array();
                                 time[i] = arrTime[i][j];
+                                punctual[i] = arrNotPunctual[i][j];
                                 viewedName.push(name);
                                 finalName.push(name);
                                 finalDegree.push(arrDegree[i][j]);
                                 finalTime.push(time);
+                                finalNotPunctual.push(punctual);
                             } else {
                                 finalTime[index][i] = arrTime[i][j];
+                                finalNotPunctual[index][i] = arrNotPunctual[i][j];
                             }
                         }
                     }
 
-                    res.json({ "date": arrDate, "name": finalName, "data": finalTime, "degree": finalDegree });
+                    res.json({ "date": arrDate, "name": finalName, "data": finalTime, "late": finalNotPunctual, "degree": finalDegree });
 
                 });
 

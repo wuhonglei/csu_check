@@ -1,7 +1,7 @@
-// 将数据导出为csv格式 服务
+// 将数据导出为csv格式 服务  
 angular.module('showLabTableDetail', [])
     .service('showLabTable', function() {
-        this.getLabTable = function(name, date, data, degree) {
+        this.getLabTable = function(name, date, data, late, degree) {
             //////////
             // name: ["吴洪磊", "高跃进", "姜旦明"]
             // date: ["星期一", "星期二"] //
@@ -16,6 +16,7 @@ angular.module('showLabTableDetail', [])
             console.info("日期长度:", dateLen);
 
             date.push("时间总计");
+            date.push("迟到次数");
             date.push("是否合格");
 
             // ms: 6.86 h 
@@ -23,23 +24,26 @@ angular.module('showLabTableDetail', [])
             var degreeRegExp = /ms/i;
 
             // 用来显示表格头部, 第一个单元格用空格
-            date.unshift("日期");
+            date.unshift("姓名");
             var tableHeader = date;
             // 存放表格内容
             var tableContent = [];
             // 填充时间总计, 是否合格
             for (var i = 0, len = data.length; i < len; i++) {
                 // 存放个人的时间总计
-                var count = 0;
+                var countTime = 0;
+                var countLate = 0;
                 for (var j = 0, LEN = data[i].length; j < LEN; j++) {
-                    count += data[i][j];
-                    // console.info("时间:", count);
+                    countTime += data[i][j];
+                    countLate += late[i][j];
+                    // console.info("时间:", countTime);
                 }
-                count = Math.round(count);
-                data[i][dateLen] = count;
+                countTime = Math.round(countTime);
+                data[i][dateLen] = countTime;
+                data[i].push(countLate);
                 // 判断总时间是否符合要求
                 
-                var isMeet = (count < (degreeRegExp.test(degree[i]) ? 48 : 56)) ? "不合格" : "合格";
+                var isMeet = (countTime < (degreeRegExp.test(degree[i]) ? 48 : 56)) ? "不合格" : "合格";
                 data[i].push(isMeet);
                 data[i].unshift(name[i]);
                 tableContent.push(data[i]);

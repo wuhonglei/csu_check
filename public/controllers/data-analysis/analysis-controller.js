@@ -420,7 +420,7 @@ angular.module('myApp').controller('AnalysisCtrl', ['$scope', '$http', 'setRange
                     // 有数据展示时展开表格
                     $scope.activePanelsLab = 0;
                     var tableObj = showLabTable.getLabTable(response.name,
-                        response.date, response.metaData, response.degree);
+                        response.date, response.metaData, response.late, response.degree);
                     // 设置表格底部, colspan 的数目
                     $scope.lab_td_length = response.date.length;
                     $scope.lab = {
@@ -509,7 +509,7 @@ angular.module('myApp').controller('AnalysisCtrl', ['$scope', '$http', 'setRange
                     // 有数据展示时展开表格
                     $scope.activePanelsTutor = 0;
                     var tableObj = showLabTable.getLabTable(response.name,
-                        response.date, response.metaData, response.degree);
+                        response.date, response.metaData, response.late, response.degree);
                     // 设置表格底部, colspan 的数目
                     $scope.tutor_td_length = response.date.length;
                     $scope.tutor = {

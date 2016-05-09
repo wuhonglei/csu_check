@@ -52,6 +52,7 @@ angular.module('showChartService')
                     "date": arrDate,
                     "data": seriesData,
                     "metaData": arrData,
+                    "late": data.late,
                     "degree": data.degree
                 };
             }, function(response) {
