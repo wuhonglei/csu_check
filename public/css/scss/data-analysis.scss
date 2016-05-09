@@ -1,5 +1,4 @@
 @import 'public';
-
 $screen-sm-min: 768px;
 $screen-md-min: 992px;
 $screen-lg-min: 1200px;
@@ -18,7 +17,7 @@ $screen-lg-min: 1200px;
     #chart-lab,
     #chart-tutor,
     #chart-person {
-        height: 450px;
+        height: 500px;
     }
 }
 
@@ -32,11 +31,22 @@ $screen-lg-min: 1200px;
 }
 
 .space-width {
-	width: 30px;
+    width: 30px;
 }
 
 .input-group-position {
-	float: left;
-	margin-left: 15px;
-	margin-bottom: 15px;
+    float: left;
+    margin-left: 15px;
+    margin-bottom: 15px;
+}
+
+.btn-radius {
+    border-radius: 4px !important;
+}
+
+.top-right {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 200px;
 }

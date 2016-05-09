@@ -1,7 +1,7 @@
-angular.module('myApp', ['mgcrea.ngStrap', 'ngRoute', 'showTableService', 'showRangeDateServie', 'showChartService', 'ShowTableFilter'])
+angular.module('myApp', ['mgcrea.ngStrap', 'ngSanitize', 'ngRoute', 'showTableService', 'showRangeDateServie', 'showChartService', 'showLabTableDetail', 'ShowTableFilter', 'ngSanitize', 'ngCsv', 'defaultEnter'])
     .config(function($routeProvider, $locationProvider) {
         $routeProvider
-  
+
         // route for the home page
             .when('/', {
             templateUrl: 'partials/home.html',

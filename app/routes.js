@@ -21,10 +21,12 @@ module.exports = function(router) {
         res.json({ "message": "welcome to our api" });
     });
 
-
+    // 模型: 具体某天详细的签到记录
     var Day = require('./models/Nerd').Day;
     // 模型: 个人
     var Person = require('./models/Nerd').Person;
+    // 模型: 导师
+    var Tutor = require('./models/Nerd').Tutor;
     // 获取某个日期是星期几
     var getWeekDay = function(detailDate) {
         var weekday = new Array(7);
@@ -99,29 +101,36 @@ module.exports = function(router) {
             var untilDate = req.params.untilDate;
 
             Person.find({
-                date: { $gte: fromDate, $lte: untilDate },
-                'data.name': name
-            }).
+                    date: { $gte: fromDate, $lte: untilDate },
+                    'data.name': name
+                }).
+                // 按日期升序排序
             sort({ date: 1 }).
             exec(function(err, data) {
-                // console.info(data);
+                if (err) throw err;
                 var len = data.length;
-                console.info("日期长度:", len);
+                if (len === 0) {
+                    res.json({ message: "nodata" });
+                    return;
+                }
+                // console.info("个人数据:", data);
+                // console.info("日期长度:", len);
                 var date_arr = [];
                 var time_arr = [];
-
+                var degree;
                 data.forEach(function(value, index) {
-                    date_arr.push(getWeekDay(value.date));
-                    var len2 = value.data.length;
-                    for (var i = 0; i < len2; i++) {
-                        if (value.data[i].name === name) {
-                            time_arr.push(value.data[i].time);
-                            break;
+                        date_arr.push(getWeekDay(value.date));
+                        var len2 = value.data.length;
+                        for (var i = 0; i < len2; i++) {
+                            if (value.data[i].name === name) {
+                                time_arr.push(value.data[i].time);
+                                degree = JSON.parse(JSON.stringify(value.data[i])).degree;
+                                break;
+                            }
                         }
-                    }
-                    // res.json(value.data);
-                })
-                res.json({ "date": date_arr, "data": time_arr });
+                    })
+                    // console.info("学位:", degree);
+                res.json({ "date": date_arr, "data": time_arr, "degree": degree });
             })
         });
     // 查询某段时间实验室的签到记录
@@ -133,61 +142,171 @@ module.exports = function(router) {
             var untilDate = req.params.untilDate;
 
             Person.find({
-                date: { $gte: fromDate, $lte: untilDate },
-                'data.lab': lab
+                date: { $gte: fromDate, $lte: untilDate }
+                //, 'data.lab': lab
             }).
             sort({ date: 1 }).
             exec(function(err, data) {
-                // console.info(data);
-                var len = data.length;
-                console.info("日期长度:", len);
-                // res.json(data);
-                // return;
-                var name_arr = [];
-                var date_arr = [];
-                var time_arr = new Array();
+                if (err) throw err;
+                var arrName = [];
+                var arrDate = [];
+                var arrTime = [];
+                var arrDegree = [];
+                if (data.length === 0) {
+                    res.json({ message: "nodata" });
+                    return;
+                }
 
+                // data存放的是日期范围内所有用户的数据
                 data.forEach(function(value, index) {
-                    date_arr.push(getWeekDay(value.date));
-                    var len2 = value.data.length;
-                    // 某个实验室最多有30人, 减少查询次数
-                    var index = len2;
-                    for (var i = 0; i < len2; i++) {
+                    // 存放某个日期的姓名, 时间, 学位数组
+                    var name = [];
+                    var time = [];
+                    var degree = [];
+                    for (var i = 0, index = len = value.data.length; i < len; i++) {
                         if (value.data[i].lab === lab) {
-                            name_arr.push(value.data[i].name);
-                            time_arr.push(value.data[i].time);
+                            degree.push(JSON.parse(JSON.stringify(value.data[i])).degree);
+                            name.push(value.data[i].name);
+                            time.push(value.data[i].time);
                             index = i;
                         }
                         // 说明该实验室已经遍历完
                         if (i - index > 1) break;
                     }
-                    // res.json(value.data);
-                });
-                var len3 = name_arr.length;
-                // console.info("实验室人员:", name_arr);
-                var increase;
-                // 判断该实验室人数
-                if (len === 1) {
-                    // 如果查询日期只有一天
-                    increase = name_arr.length;
-                } else {
-                    increase = name_arr.indexOf(name_arr[0], 1);
-                }
-                name_arr = name_arr.slice(0, increase);
-                // console.info("实验室人数:", increase);
-                // 用来存放实验室每个人某段时间的签到时间
-                var totalTime = [];
-                // 初始化数组
-                for (var i = 0, len = increase; i < increase; i++) {
-                    totalTime.push(new Array());
-                }
-                for (var i = 0, len = len3; i < len; i++) {
-                    totalTime[i % increase].push(time_arr[i]);
-                }
 
-                res.json({ "date": date_arr, "name": name_arr, "data": totalTime });
+                    arrName.push(name);
+                    arrTime.push(time);
+                    arrDegree.push(degree);
+                    arrDate.push(getWeekDay(value.date));
+                });
+
+                // 格式化数据
+                var finalName = [];
+                var finalTime = [];
+                var finalDegree = [];
+                var viewedName = [];
+                // 遍历姓名数组
+                for (var i = 0, len = arrName.length; i < len; i++) {
+                    // 遍历每天的姓名数组
+                    for (var j = 0, LEN = arrName[i].length; j < LEN; j++) {
+                        // 存放当前访问的姓名
+                        var name = arrName[i][j];
+                        var index = viewedName.indexOf(name);
+                        // 第一次访问该姓名
+                        if (index === -1) {
+                            // 存放个人时间
+                            var time = new Array();
+                            time[i] = arrTime[i][j];
+                            viewedName.push(name);
+                            finalName.push(name);
+                            finalDegree.push(arrDegree[i][j]);
+                            finalTime.push(time);
+                        } else {
+                            finalTime[index][i] = arrTime[i][j];
+                        }
+                    }
+                }
+                res.json({ "date": arrDate, "name": finalName, "data": finalTime, "degree": finalDegree });
             })
         });
+
+    // 查询某段时间某位导师所带学生的签到记录
+    router.route('/tutor/:tutor/:fromDate/:untilDate')
+        .get(function(req, res) {
+            // 获取传入的参数, 导师名字, 起始日期, 截止日期
+            var tutorName = req.params.tutor;
+            var fromDate = req.params.fromDate;
+            var untilDate = req.params.untilDate;
+
+            // 查询导师带学生
+            Tutor.find({
+                name: tutorName
+            }).
+            exec(function(err, data) {
+                if (err) throw err;
+
+                // 如果没有查询到该导师信息
+                if (data.length === 0) {
+                    res.json({ message: "nodata" });
+                    return;
+                }
+
+                // 存放导师所带学生姓名
+                var studentsName = data[0].students;
+
+                // 再次请求数据库, 查询这段时间内个人的签到信息
+                Person.find({
+                    date: { $gte: fromDate, $lte: untilDate }
+                    //, 'data.lab': lab
+                }).
+                sort({ date: 1 }).
+                exec(function(err, data) {
+                    if (err) throw err;
+
+                    if (data.length === 0) {
+                        res.json({ message: "nodata" });
+                        return;
+                    }
+                    // 分别用来存放日期, 姓名, 时间, 学位
+                    var arrDate = [];
+                    var arrName = [];
+                    var arrTime = [];
+                    var arrDegree = [];
+
+                    // data存放的是日期范围内所有用户的数据
+                    data.forEach(function(value, index) {
+                        // 存放某个日期的姓名, 时间, 学位数组
+                        var name = [];
+                        var time = [];
+                        var degree = [];
+                        for (var i = 0, len = value.data.length; i < len; i++) {
+                            if (studentsName.indexOf(value.data[i].name) != -1) {
+                                // console.info("姓名:", value.data[i].name);
+                                degree.push(JSON.parse(JSON.stringify(value.data[i])).degree);
+                                name.push(value.data[i].name);
+                                time.push(value.data[i].time);
+                            }
+                        }
+
+                        arrName.push(name);
+                        arrTime.push(time);
+                        arrDegree.push(degree);
+                        arrDate.push(getWeekDay(value.date));
+                    });
+
+                    var finalName = [];
+                    var finalTime = [];
+                    var finalDegree = [];
+                    var viewedName = [];
+                    // 遍历姓名数组
+                    for (var i = 0, len = arrName.length; i < len; i++) {
+                        // 遍历每天的姓名数组
+                        for (var j = 0, LEN = arrName[i].length; j < LEN; j++) {
+                            // 存放当前访问的姓名
+                            var name = arrName[i][j];
+                            var index = viewedName.indexOf(name);
+                            // 第一次访问该姓名
+                            if (index === -1) {
+                                // 存放个人时间
+                                var time = new Array();
+                                time[i] = arrTime[i][j];
+                                viewedName.push(name);
+                                finalName.push(name);
+                                finalDegree.push(arrDegree[i][j]);
+                                finalTime.push(time);
+                            } else {
+                                finalTime[index][i] = arrTime[i][j];
+                            }
+                        }
+                    }
+
+                    res.json({ "date": arrDate, "name": finalName, "data": finalTime, "degree": finalDegree });
+
+                });
+
+            });
+        });
+
     // frontend routes =========================================================
     // route to handle all angular requests
     router.get('*', function(req, res) {

@@ -146,7 +146,7 @@ var updateMongoDB = function(url, day) {
 
 
 // 每半小时从网页上抓取一次数据
-var Interval = 0.01 * 60 * 60 * 1000;
+var Interval = 0.1 * 60 * 60 * 1000;
 var url = "http://202.197.61.249:8080/2.05/Show2.jsp?day=";
 
 

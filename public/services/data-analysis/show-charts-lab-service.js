@@ -22,13 +22,11 @@ angular.module('showChartService')
             var obj = $http.get(url).then(function(response) {
                 var data = response.data;
                 // 如果返回的数据为空或未定义
-                if (data === undefined || data.length === 0)
+                if (data.message === "nodata")
                     return {
-                        "name": arrName,
-                        "date": arrDate,
-                        "data": arrData
+                        message: "nodata"
                     };
- 
+
                 arrName = data.name;
                 arrDate = data.date;
                 arrData = data.data;
@@ -36,19 +34,14 @@ angular.module('showChartService')
 
                 for (var i = 0, len = data.data.length; i < len; i++) {
                     var obj = {
-                        type: 'line',
-                        markLine: {
-                            lineStyle: {
-                                normal: {
-                                    type: 'dashed'
-                                }
-                            },
-                            data: [{
-                                name: '平均时间',
-                                // 支持 'average', 'min', 'max'
-                                type: 'average'
-                            }]
-                        }
+                        type: 'bar',
+                        label: {
+                            normal: {
+                                show: true,
+                                position: 'insideRight'
+                            }
+                        },
+                        stack: '总时长'
                     };
                     obj.name = arrName[i];
                     obj.data = arrData[i];
@@ -57,7 +50,9 @@ angular.module('showChartService')
                 return {
                     "name": arrName,
                     "date": arrDate,
-                    "data": seriesData
+                    "data": seriesData,
+                    "metaData": arrData,
+                    "degree": data.degree
                 };
             }, function(response) {
                 return "error";

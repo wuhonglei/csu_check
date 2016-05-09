@@ -1,6 +1,8 @@
+<!-- <div class="row" bs-scrollspy-list data-target="#myScrollspy"> -->
+<!-- <div class="col-xs-11"> -->
 <!-- 日期查询范围 -->
 <div class="form-group">
-    <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i> 日期范围 <small>(默认当天)</small></label>
+    <label class="control-label"><i class="fa fa-calendar"></i> <i class="fa fa-arrows-h"></i> <i class="fa fa-calendar"></i> 日期范围 <small>(一周)</small></label>
     <br>
     <div class="form-group col-xs-3">
         <input type="text" class="form-control" ng-model="fromDate" data-min-date="03/1/2016" data-max-date="today" data-date-format="yyyy-MM-dd" data-autoclose="1" placeholder="From" bs-datepicker>
@@ -8,46 +10,141 @@
     <div class="form-group col-xs-3">
         <input type="text" class="form-control" ng-model="untilDate" data-min-date="{{fromDate}}" data-max-date="today" data-date-format="yyyy-MM-dd" data-autoclose="1" placeholder="Until" bs-datepicker>
     </div>
+    <!--     <div class="form-group col-xs-4 well well-sm">
+        硕士、博士每天平均在线时长: 6.86， 8.00小时
+    </div> -->
 </div>
 <form class="form-inline input-group input-group-position" role="form" novalidate>
     <div class="form-group">
-        <button class="btn btn-default" ng-click="searchDate()" data-type="success" data-title="{{tooltip.title1}}" bs-tooltip>查询理论研究所</button>
+        <span class="input-group-btn">
+        <button class="btn btn-default btn-radius" ng-click="searchDate()" data-title="{{tooltip.title1}}" bs-tooltip>查询理论与软件所</button>
+        </span>
     </div>
     <div class="form-group space-width"></div>
     <div class="input-group col-xs-3">
-        <input type="text" class="form-control" ng-model="$parent.name" placeholder="个人姓名" data-title="{{tooltip.title4}}" bs-tooltip="tooltip">
+        <input type="text" class="form-control" ng-model="$parent.name" ng-enter="getPernalData()" placeholder="个人姓名" data-title="{{tooltip.title4}}" bs-tooltip="tooltip">
         <span class="input-group-btn">
         <button class="btn btn-default" type="button" ng-click="getPernalData()">查询</button>
   </span>
     </div>
     <div class="form-group space-width"></div>
     <div class="input-group col-xs-3">
-        <input type="text" class="form-control" ng-model="$parent.labName" placeholder="实验室名称" data-title="{{tooltip.title3}}" bs-tooltip="tooltip">
+        <input type="text" class="form-control" ng-model="$parent.labName" ng-enter="getLabData()" placeholder="实验室名称" data-title="{{tooltip.title3}}" bs-tooltip="tooltip">
         <span class="input-group-btn">
         <button class="btn btn-default" type="button" ng-click="getLabData()">查询</button>
   </span>
     </div>
     <div class="form-group space-width"></div>
     <div class="input-group col-xs-3">
-        <input type="text" class="form-control" data-title="{{tooltip.title2}}" ng-init="TutorName=''" ng-model="TutorName" placeholder="导师姓名 " bs-tooltip="tooltip" disabled="disabled">
+        <input type="text" class="form-control" ng-model="$parent.tutorName" ng-enter="getTutorData()" data-title="{{tooltip.title2}}" placeholder="导师姓名 " bs-tooltip="tooltip">
         <span class="input-group-btn">
-        <button class="btn btn-default" type="button">查询</button>
+        <button class="btn btn-default" type="button" ng-click="getTutorData()">查询</button>
   </span>
     </div>
 </form>
 <div id="chart-contaoner ">
     <!-- 第一行 -->
-    <div class="row ">
-        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="chart-compute">
-        </div>
-        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="chart-person">
+    <div class="row" id="chart-compute">
+    </div>
+    <br>
+    <br>
+    <hr>
+    <div class="row" id="chart-person">
+    </div>
+    <hr>
+    <!-- 实验室图表 -->
+    <div class="row" id="chart-lab"></div>
+    <p></p>
+    <!-- 实验室表格[折叠面板] -->
+    <div class="panel-group" ng-model="activePanelsLab" role="tablist" bs-collapse>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab">
+                <h4 class="panel-title">
+        <a bs-collapse-toggle>
+          显示实验室表格
+        </a>
+      </h4>
+            </div>
+            <div class="panel-collapse" role="tabpanel" bs-collapse-target>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th ng-repeat="item in lab.header track by $index">{{ item }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="tdItems in lab.content as lab_result  track by $index" ng-class-even="'active'">
+                                <td ng-repeat="item in tdItems as lab_result track by $index">{{ item }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="{{lab_td_length}}">
+                                    <strong>人数: {{lab_result.length}}</strong>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-    <!-- 第二行 -->
-    <div class="row ">
-        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="chart-lab">
-        </div>
-        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 " id="chart-tutor">
+    <button type="button" class="btn btn-defaultr" ng-csv="CSVContent" filename="{{filename}}.csv">导出为excel</button>
+    <hr>
+    <!-- 导师图表 -->
+    <div class="row" id="chart-tutor"></div>
+    <p></p>
+    <!-- 导师表格[折叠面板] -->
+    <div class="panel-group" ng-model="activePanelsTutor" role="tablist" bs-collapse>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab">
+                <h4 class="panel-title">
+        <a bs-collapse-toggle>
+          显示导师所带学生表格
+        </a>
+      </h4>
+            </div>
+            <div class="panel-collapse" role="tabpanel" bs-collapse-target>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th ng-repeat="item in tutor.header track by $index">{{ item }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="tdItems in tutor.content as tutor_result track by $index" ng-class-even="'active'">
+                                <td ng-repeat="item in tdItems as tutor_result track by $index">{{ item }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="{{tutor_td_length}}">
+                                    <strong>人数: {{tutor_result.length}}</strong>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
+    <button type="button" class="btn btn-defaultr" ng-csv="CSVContentTutor" filename="{{filenameTutor}}.csv">导出为excel</button>
 </div>
+<!-- </div> -->
+<!-- <div class="col-xs-1" id="myScrollspy">
+        <ul class="nav nav-tabs nav-stacked" bs-affix>
+            <li class="active"><a href="" ng-click="scrolltoHref('chart-compute')">查询研究所学生</a></li>
+            <li><a href="" ng-click="scrolltoHref('chart-person')">查询姓名</a></li>
+            <li><a href="" ng-click="scrolltoHref('chart-lab')">查询实验室</a></li>
+            <li><a href="" ng-click="scrolltoHref('chart-tutor')">查询导师</a></li>
+        </ul>
+        <ul class="nav nav-tabs nav-stacked" bs-affix>
+            <li class="active"><a href="#chart-compute">查询研究所学生</a></li>
+            <li><a href="#chart-person">查询姓名</a></li>
+            <li><a href="#chart-lab">查询实验室</a></li>
+            <li><a href="#chart-tutor">查询导师</a></li>
+        </ul>
+    </div> -->
+<!-- </div> -->

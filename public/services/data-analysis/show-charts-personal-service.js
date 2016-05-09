@@ -20,10 +20,42 @@ angular.module('showChartService')
             url = url + name + "/" + formatDate(fromDate) + "/" + formatDate(untilDate);
             var obj = $http.get(url).then(function(response) {
                 var data = response.data;
-                if (data === undefined) return { "date": arrDate, "data": arrData };
+                if (data.message === "nodata") {
+                    console.warn("个人图表没有数据");
+                    return {
+                        message: "nodata"
+                    }
+                }
+
+                var formatWeekDay = function(date){
+                    var month = date.getMonth() + 1 + '月';
+                    var day = date.getDate() + '日';
+                    return '\n' + [month, day].join("");
+                };
+
+                // 给起始和截止日期加上 xx月-xx日 ,最后的形式: 星期一 4月-28日
                 arrDate = data.date;
+                arrDate[0] += formatWeekDay(fromDate);
+                arrDate[arrDate.length-1] += formatWeekDay(untilDate);
+
                 arrData = data.data;
-                return { "date": arrDate, "data": arrData };
+                // ms: 6.86 h 
+                // phd: 8.00 h
+                var degreeRegExp = /ms/i;
+                var markLineData = [{
+                    label: {
+                        normal: {
+                            formatter: '{b}' + (degreeRegExp.test(data.degree) ? 6.86 : 8) + ' h'
+                        }
+                    },
+                    name: '基准时长',
+                    coord: [arrDate[0], degreeRegExp.test(data.degree) ? 6.86 : 8]
+                }, {
+                    name: '基准时长',
+                    coord: [arrDate[arrDate.length - 1], degreeRegExp.test(data.degree) ? 6.86 : 8]
+                }];
+                console.info("基准时间:", markLineData);
+                return { "date": arrDate, "data": arrData, "baseLine": markLineData };
             }, function(response) {
                 return "error";
             });

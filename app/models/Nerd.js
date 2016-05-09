@@ -9,19 +9,25 @@ var userSchema = new Schema({
 });
 
 var personSchema = new Schema({
-	date: Date,
-	data: [{
-		name: String,
-		lab: String,
-		tutor: String,
-		time: Number
-	}]
+    date: Date,
+    data: [{
+        name: String,
+        lab: String,
+        tutor: String,
+        time: Number
+    }]
+});
+
+var TutorSchema = new Schema({
+	name: String,
+	students: Array
 });
 // the schema is useless so far 
 // we need to create a model using it 
 var Day = mongoose.model('Day', userSchema, 'detail_attendancy');
 var Person = mongoose.model('Person', personSchema, 'person');
+var Tutor = mongoose.model('Tutor', TutorSchema, 'tutor');
 // make this available to our users in our Node applications
 exports.Day = Day;
 exports.Person = Person;
-
+exports.Tutor = Tutor;
