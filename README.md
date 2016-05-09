@@ -1,20 +1,46 @@
-# MEAN Stack Single Page Application Starter
+#### 网页功能描述
 
-This is a repo for a starter appliation for a Single Page MEAN Stack application. Just download and install and you have a good foundation for building application. 
+[网址:](http://202.197.66.72:8080/)http://202.197.66.72:8080/
 
-## Installation
-1. Download the repository
-2. Install npm modules: `npm install`
-3. Install bower dependencies `bower install`
-4. Start up the server: `node server.js`
-5. View in browser at http://localhost:8080
+**网页共两个页面:**
+1. 首页
+2. 数据分析
 
-Use this starter kit to build any MEAN stack application you like.
+**详细说明:**
+> 首页
 
-If you have any questions or requests, email us at [chris@scotch.io](mailto:chris@scotch.io) and we'll keep updating this to make it perfect.
+首页页面如下图:
+![首页](http://ww2.sinaimg.cn/large/8ff8f24bgw1f3ov5y0gm9j20z70lu7cg.jpg)
 
-## Future Additions
-- CRUD examples
-- Development and Production Environments
-- Link examples
-- Single Page AngularJS Animations
+首页共有5个功能:
+<small><em>当没有选择具体日期时, 默认日期是当天所在日期!</em></small>
+
+1. 在 `姓名输入框` 输入姓名, 不用按回车, 即能搜索该学生的具体签到信息.
+2. 在 `实验室输入框` 输入实验室名称, 如`113`, 即能搜索出所有以113开头的实验室信息.
+3. 点击`日期查询框`输入框, 弹出日期选择框, 选择具体的查询日期, 最早的查询日期是2016-03-01.
+4. 点击`是否按时单选按钮组`, 如`按时`, 即能搜索出按时到勤的学生(如果姓名或实验室输入框已经输入了有效查询, 那选择按时, 查询的结果就是该实验室按时到勤的学生).
+5. 点击`日在线时间(小时)`即可对搜索结果按时时间的升序或降序排序, 默认是无序的.
+
+> 数据分析
+
+数据分析页面如下:
+![数据分析页面](http://ww4.sinaimg.cn/large/8ff8f24bgw1f3ovdbwru1j20z00p0ads.jpg)
+
+数据分析页面共有5个功能:
+
+1. 日期范围: 如果当天日期是星期一至星期四中的某天, 那么日期范围默认是上个星期一至星期天, 如果当天日期是星期五至星期天中的某天, 那么日期范围默认是本周一至当天日期. 也可以手动选择要查询的日期范围.
+2. 点击`查询理论与软件所`按钮, 查询该日期范围内理论与软件所每天到勤率的变化情况, **到勤率 = 按时到勤人数 / 总人数**
+3. 在`姓名输入框`, 输入要查询的学生姓名, 查询该日期范围内该学生的日在线时间的变化情况.
+4. 在`实验室名称输入框`, 输入要查询的实验室名称, 查询该日期内该实验室所有学生的日在线时间的变化情况.
+5. 在`导师姓名输入框`, 输入要查询的导师姓名, 查询该日期范围内该导师管理的所有学生的日在线时间的变化情况.
+
+**下面以实验室名称查询结果为例, 进行解释说明:**
+![实验室查询结果](http://ww2.sinaimg.cn/large/8ff8f24bgw1f3ovy395g2j20x60maq72.jpg)
+
+1. X - 轴, 代表实验室所有人的累加时长
+2. Y - 轴, 代表日期范围, 如 星期一至星期天
+3. 图形下方有表格, 描述了实验室每个人在该日期范围内的日在线时间的变化, 最后给出了时间总计, 以及是否合格
+4. 在表格的下方, 有`导出为excel` 按钮, 点击后即可将表格内容导出为excel.
+
+<hr>
+谢谢,如果对网站有任何建议, 请发送邮件至 <whl1017368065@126.com>  
