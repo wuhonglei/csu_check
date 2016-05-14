@@ -124,7 +124,7 @@ var updateMongoDB = function(url, day) {
 
             // ==============在数据库中查找特定日期的documents, 如果存在则更新, 不存在则创建新的documents=====================
             var query = { date: new Date(day) };
-            console.info("查询日期:", query);
+            // console.info("查询日期:", query);
             DayDetail.update(query, {
                 date: new Date(day),
                 data: date_arr

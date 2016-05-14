@@ -45,9 +45,6 @@ module.exports = function(router) {
             // console.info("查询日期:", req.params.day);
             Day.find({ date: req.params.day }, function(err, data) {
                 if (err) throw err;
-                // console.info(data)
-                // var data_json = JSON.parse(data);
-                // console.info("类型:", data);
                 res.json(data[0].data);
             });
         });

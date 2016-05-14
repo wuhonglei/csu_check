@@ -300,6 +300,7 @@ angular.module('myApp').controller('AnalysisCtrl', ['$scope', '$http', 'setRange
             console.info("姓名:", $scope.name);
             var res = drawPersonalChartsService.getPersonalChart('/personal/',
                 $scope.name, $scope.fromDate, $scope.untilDate);
+            $scope.showPerson = false;
             if (res === "date-error") {
                 myPersonalChart.setOption(optionPersonal);
                 myAlertDate.$promise.then(myAlertDate.show);
@@ -353,6 +354,8 @@ angular.module('myApp').controller('AnalysisCtrl', ['$scope', '$http', 'setRange
                             }
                         }]
                     });
+                    $scope.showPerson = true;
+                    $scope.personTotalTime = response.totalTime;
                 },
                 function(response) {
                     // 请求失败

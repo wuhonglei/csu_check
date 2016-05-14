@@ -27,7 +27,7 @@ angular.module('showChartService')
                     }
                 }
 
-                var formatWeekDay = function(date){
+                var formatWeekDay = function(date) {
                     var month = date.getMonth() + 1 + '月';
                     var day = date.getDate() + '日';
                     return '\n' + [month, day].join("");
@@ -36,7 +36,7 @@ angular.module('showChartService')
                 // 给起始和截止日期加上 xx月-xx日 ,最后的形式: 星期一 4月-28日
                 arrDate = data.date;
                 arrDate[0] += formatWeekDay(fromDate);
-                arrDate[arrDate.length-1] += formatWeekDay(untilDate);
+                arrDate[arrDate.length - 1] += formatWeekDay(untilDate);
 
                 arrData = data.data;
                 // ms: 6.86 h 
@@ -55,7 +55,16 @@ angular.module('showChartService')
                     coord: [arrDate[arrDate.length - 1], degreeRegExp.test(data.degree) ? 6.86 : 8]
                 }];
                 console.info("基准时间:", markLineData);
-                return { "date": arrDate, "data": arrData, "baseLine": markLineData };
+                var totalTime = 0;
+                for (var i = 0, len = arrData.length; i < len; i++) {
+                    totalTime += arrData[i];
+                }
+                return {
+                    "date": arrDate,
+                    "data": arrData,
+                    "totalTime": Math.round(totalTime) + ' h',
+                    "baseLine": markLineData
+                };
             }, function(response) {
                 return "error";
             });
