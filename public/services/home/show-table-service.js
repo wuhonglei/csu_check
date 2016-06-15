@@ -13,15 +13,4 @@ angular.module('showTableService', [])
         };
         return table;
     }]);
-    // .factory('ShowTableService', ['getTableService', function(getTableService){
-    // 	var table = {};
-    // 	var tableItems = [];
-    // 	table.getTableHeader = function(url){
-    // 		if(tableItems.length) return tableItems[0];
-    // 		getTableService.getTable(url).then(function(response){
 
-// 		}, function(response){
-
-// 		});
-// 	};
-// }])

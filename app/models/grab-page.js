@@ -144,18 +144,35 @@ var updateMongoDB = function(url, day) {
 };
 
 
-// 每半小时从网页上抓取一次数据
-var Interval = 0.1 * 60 * 60 * 1000;
-var url = "http://202.197.61.249:8080/2.05/Show2.jsp?day=";
-
+// 判断当前时间是否处于签到高峰时段
+var isBusy = function() {
+    // 高峰时段
+    // 8:00 -- 9:00, 11:20 -- 12:00 , 14:00 -- 15:00, 17:00 -- 18:00, 19:00 -- 20:00, 22:00 -- 23:00
+    var d = new Date();
+    var hour = d.getHours();
+    if (hour >= 8 && hour < 9 || hour >= 11 && hour < 12 || hour >= 14 && hour < 15 || hour >= 17 && hour < 18 || hour >= 19 && hour < 20 || hour >= 22 && hour < 23) {
+        return true;
+    } else {
+        return false;
+    }
+};
 
 var grabPage = function() {
+    // 每半小时从网页上抓取一次数据
+    // 每10秒爬取一次的时间段, 8:00 -- 9:00, 11:20 -- 12:00 , 14:00 -- 15:00, 17:00 -- 18:00, 19:00 -- 20:00, 22:00 -- 23:00
+    // 其他时间每半小时更新一次
+
+    var Interval = 10000;
+    var url = "http://202.197.61.249:8080/2.05/Show2.jsp?day=";
     // var startDate = Date.parse(new Date("2016-03-01"));
-    // var endDate = Date.parse(new Date("2016-05-09"));
+    // var endDate = Date.parse(new Date("2016-05-21"));
     // var oneDay = 24 * 60 * 60 * 1000;
     // for (var i = startDate; i <= endDate; i += oneDay) {
     // }
-    setInterval(function() {
+    var update = function(){
+        clearInterval(intervalID);
+        Interval = isBusy() ? 10000 : 1800000;
+        
         var cur_d = new Date();
         var y = cur_d.getFullYear();
         var m = cur_d.getMonth() + 1;
@@ -165,6 +182,10 @@ var grabPage = function() {
         var setDate = [y, m, d].join("-");
         var newURL = url + [y, m, d].join("");
         updateMongoDB(newURL, setDate);
-    }, Interval);
+
+        intervalID = setInterval(update, Interval);
+    };
+    var intervalID = setInterval(update, Interval);
+
 };
 module.exports = grabPage;
